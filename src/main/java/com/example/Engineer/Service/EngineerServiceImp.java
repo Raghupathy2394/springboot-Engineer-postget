@@ -13,6 +13,29 @@ public interface EngineerServiceImp {
 	 
     List<Engineer> getall();
 
+	Engineer update(Engineer engineer);
+
+	String delete(int id);
+
+	List<Engineer> createall(List<Engineer> engineerall);
+
+
+
+
+
+	
+
+
+
+
+	
+
+
+
+
+
+
+
 
 
 	
