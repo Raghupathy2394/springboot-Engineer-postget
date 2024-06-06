@@ -1,8 +1,6 @@
-package com.example.Engineer.entity;
+package com.example.Engineer.Dto;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.example.Engineer.entity.Engineer;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,12 +8,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Entity
 @Table(name = "Engineer")
 @Data
-public class Engineer {
+public class EngineerDto {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,4 +29,5 @@ public class Engineer {
 	private String role;
 	@Column(name = "city")
 	private String city;
+
 }
