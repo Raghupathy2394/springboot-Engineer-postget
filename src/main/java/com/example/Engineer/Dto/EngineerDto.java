@@ -11,14 +11,13 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Entity
-@Table(name = "Engineer")
+
 @Data
 public class EngineerDto {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 	@Column(name = "name")
 	private String name;
 	@Column(name = "salary")

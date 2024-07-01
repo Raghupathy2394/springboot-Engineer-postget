@@ -14,11 +14,13 @@ public interface EngineerRepository extends JpaRepository<Engineer, Integer>{
   
 // @Query(value="select name,city,role from studentdata.engineer where name=John")
 
-	 Optional<Engineer> findByName(String name);
+//	 Optional<Engineer> findByName(String name);
 
-	List<Engineer> findByCity(String city);
+//	List<Engineer> findByCity(String city);
 
-	
+	@Query(value="select * from engineers where name=:name and city=:city",nativeQuery=true) 
+	Engineer findOneByNameAndCity(String name, String city);
+  
 
 //	Engineer findbyName(String name);
 

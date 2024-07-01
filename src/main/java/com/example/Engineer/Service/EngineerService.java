@@ -1,15 +1,24 @@
 package com.example.Engineer.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.Engineer.Dto.EngineerDto;
+import com.example.Engineer.Dto.LoginDto;
+import com.example.Engineer.Dto.RequestDto;
+import com.example.Engineer.Dto.SignupDto;
 import com.example.Engineer.Repository.EngineerRepository;
+import com.example.Engineer.common.ApiResponse;
+import com.example.Engineer.common.JwtToken;
 import com.example.Engineer.entity.Engineer;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
@@ -20,6 +29,14 @@ public class EngineerService implements EngineerServiceImp {
 
 	@Autowired
 	EngineerRepository engineerRepo;
+	
+
+	@Autowired
+	JwtToken jwToken;
+	
+	@Autowired
+	RequestDto requestDto;
+	
 
 	@Override
 	public Engineer create(Engineer engineer) {
@@ -36,16 +53,16 @@ public class EngineerService implements EngineerServiceImp {
 		return engineerRepo.findAll();
 	}
 
-	@Override
-	public Engineer update(Engineer engineer) {
-		Optional<Engineer> engineer1 = engineerRepo.findById(engineer.getId());
-		Engineer engineer2 = engineer1.get();
-		engineer2.setId(engineer.getId());
-		engineer2.setName(engineer.getName());
-		engineer2.setContact(engineer.getContact());
-		engineer2.setSalary(engineer.getSalary());
-		return engineerRepo.save(engineer2);
-	}
+//	@Override
+//	public Engineer update(Engineer engineer) {
+//		Optional<Engineer> engineer1 = engineerRepo.findById(engineer.getId());
+//		Engineer engineer2 = engineer1.get();
+//		engineer2.setId(engineer.getId());
+//		engineer2.setName(engineer.getName());
+//		engineer2.setContact(engineer.getContact());
+//		engineer2.setSalary(engineer.getSalary());
+//		return engineerRepo.save(engineer2);
+//	}
 
 	@Override
 	public String delete(int id) {
@@ -53,24 +70,24 @@ public class EngineerService implements EngineerServiceImp {
 		return "deleted";
 	}
 
-	@Override
-	public List<Engineer> createall(List<Engineer> engineerall) {
-		return engineerRepo.saveAll(engineerall);
-	}
-
-	@Override
-	public Optional<Engineer> getfilter(String name) {
-		return engineerRepo.findByName(name);
-	}
-
-	// get all engineers and one variable using string
-	@Override
-	public List<Engineer> getallEngineer(String city) {
-		if(city==null) {
-			return engineerRepo.findAll();
-		} else
-			return engineerRepo.findByCity(city);
-	}
+//	@Override
+//	public List<Engineer> createall(List<Engineer> engineerall) {
+//		return engineerRepo.saveAll(engineerall);
+//	}
+//
+//	@Override
+//	public Optional<Engineer> getfilter(String name) {
+//		return engineerRepo.findByName(name);
+//	}
+//
+//	// get all engineers and one variable using string
+//	@Override
+//	public List<Engineer> getallEngineer(String city) {
+//		if(city==null) {
+//			return engineerRepo.findAll();
+//		} else
+//			return engineerRepo.findByCity(city);
+//	}
 
 
 	// DTO //
@@ -116,7 +133,67 @@ for(Engineer e:engineer) {
       dto.add(engdto);
 }	return dto;
 	}
+
 	
+	@Override
+	public ApiResponse signUp(SignupDto signupdto) {
+		ApiResponse apiResponse=new ApiResponse();
+		Engineer entity=new Engineer();
+		entity.setName(signupdto.getName());
+		entity.setAge(signupdto.getAge());
+		entity.setCity(signupdto.getCity());
+		entity.setRole(signupdto.getRole());
+		entity.setGender(signupdto.getGender());
+		 
+		if(entity.getName()==null || entity.getName().isEmpty()) {
+			apiResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+			apiResponse.setData("Bad Request");
+			apiResponse.setError("No data found");
+			return apiResponse;
+		} else {
+			engineerRepo.save(entity);
+			apiResponse.setStatus(HttpStatus.OK.value());
+			apiResponse.setData(entity);
+			String token=jwToken.generateJwt(entity);
+			Map<String, Object> data=new HashMap<>();
+			data.put("Access Token", token);
+			apiResponse.setData(data);
+			return apiResponse;
+		}
 	}
 
 
+	@Override
+	public ApiResponse logIn(LoginDto logindto) {
+		ApiResponse apiResponse=new ApiResponse();
+		Engineer entity=engineerRepo.findOneByNameAndCity(logindto.getName()
+				,logindto.getCity());
+
+		if(entity==null) {
+			apiResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+			apiResponse.setData("log in failed");
+			apiResponse.setError("bad request");
+			return apiResponse;
+		} else {
+			apiResponse.setStatus(HttpStatus.OK.value());
+			String token=jwToken.generateJwt(entity);
+			Map<String, Object> data=new HashMap<>();
+			data.put("Access Token", token);
+			apiResponse.setData(data);
+			return apiResponse;
+		}
+	}
+
+
+	@Override
+	public ApiResponse privateApi(String auth) throws Exception {
+		System.out.println(requestDto.getCity());
+		ApiResponse apiResponse=new ApiResponse();
+		jwToken.verify(auth);
+		apiResponse.setStatus(HttpStatus.OK.value());
+		apiResponse.setData("This Valid Api");
+		return apiResponse;
+	}
+	
+
+}

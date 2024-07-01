@@ -7,6 +7,9 @@ import java.util.Optional;
 import org.springframework.http.converter.json.MappingJacksonValue;
 
 import com.example.Engineer.Dto.EngineerDto;
+import com.example.Engineer.Dto.LoginDto;
+import com.example.Engineer.Dto.SignupDto;
+import com.example.Engineer.common.ApiResponse;
 import com.example.Engineer.entity.Engineer;
 
 public interface EngineerServiceImp {
@@ -37,6 +40,11 @@ public interface EngineerServiceImp {
 	List<EngineerDto> getalldto(String role);
 
 	
+	ApiResponse signUp(SignupDto signupdto);
+
+	ApiResponse logIn(LoginDto logindto);
+
+	ApiResponse privateApi(String auth) throws Exception;
 
 
 

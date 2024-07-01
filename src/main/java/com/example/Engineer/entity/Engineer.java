@@ -13,15 +13,17 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "Engineer")
+@Table(name = "Engineers")
 @Data
 public class Engineer {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 	@Column(name = "name")
 	private String name;
+	@Column(name = "age")
+	private int age;
 	@Column(name = "salary")
 	private int salary;
 	@Column(name = "contact")
@@ -30,4 +32,8 @@ public class Engineer {
 	private String role;
 	@Column(name = "city")
 	private String city;
+	@Column(name = "gender")
+	private String gender;
+	@Column(name = "experience")
+	private String experience;
 }
